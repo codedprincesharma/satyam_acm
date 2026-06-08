@@ -18,13 +18,15 @@ const marqueeImages = [
 ];
 
 const teamMembers = [
-  { name: "Dr. Arup Roy", img: "hod.jpeg", gradient: "from-pink-500 to-purple-600" },
-  { name: "Mr Manasija Bhattacharya", img: "mb_img.jpeg", gradient: "from-blue-500 to-cyan-600" },
-  { name: "Moumita Ghosh", img: "moumita_img.jpg", gradient: "from-green-500 to-emerald-600" },
-  { name: "Sk. Sahnawaj", img: "sehnwaj_img.jpg", gradient: "from-orange-500 to-red-600" },
+  { name: "Dr. Arup Roy", img: "hod1.jpeg", gradient: "from-pink-500 to-purple-600", slug: "arup-roy" },
+  { name: "Mr Manasija Bhattacharya", img: "m2.jpeg", gradient: "from-blue-500 to-cyan-600", slug: "manasija-bhattacharya" },
+  { name: "Moumita Ghosh", img: "m3.jpeg", gradient: "from-green-500 to-emerald-600", slug: "moumita-ghosh" },
+  { name: "Sk. Sahnawaj", img: "m4.jpeg", gradient: "from-orange-500 to-red-600", slug: "sk-sahnawaj" },
 ];
 
+
 // ---------------- Counter Component ----------------
+
 const Counter = ({ end }) => {
   const [count, setCount] = useState(0);
 
@@ -250,27 +252,22 @@ export default function ACMPage() {
 
           <div className="grid md:grid-cols-4 gap-10 max-w-7xl mx-auto">
             {teamMembers.map((m, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-                className="group relative transition-all hover:-translate-y-5"
-              >
-                <div className="relative overflow-hidden rounded-3xl">
-                  <img
-                    src={m.img}
-                    className="absolute inset-0 w-full h-full object-cover opacity-180"
-                  />
-                  <div
-                    className={`w-full h-80 bg-gradient-to-br ${m.gradient} rounded-3xl group-hover:scale-110 transition-transform duration-300`}
-                  />
-                  <div className="absolute bottom-6 left-6">
-                    <h3 className="text-2xl font-bold">{m.name}</h3>
+              <Link href={`/core-member/${m.slug}`} key={m.slug} className="group">
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="relative transition-all hover:-translate-y-3 cursor-pointer flex flex-col items-center"
+                >
+                  <div className="w-44 h-44 rounded-full overflow-hidden border-2 border-white/10 shadow-lg">
+                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                   </div>
-                </div>
-              </motion.div>
+                  <div className="mt-4 text-center">
+                    <h3 className="text-lg font-semibold">{m.name}</h3>
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </section>
