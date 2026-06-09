@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { createJoinApplication, updateJoinApplication } from "@/lib/joinApplications";
+import { getRazorpayConfig } from "@/lib/razorpayConfig";
 
 export async function POST(req) {
   try {
@@ -15,7 +16,8 @@ export async function POST(req) {
 
     const amount = 10000;
 
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    const razorpayConfig = getRazorpayConfig();
+    if (!razorpayConfig) {
       return NextResponse.json(
         { error: "Razorpay is not configured on this environment" },
         { status: 500 }
@@ -32,10 +34,7 @@ export async function POST(req) {
       paymentStatus: "pending",
     });
 
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
+    const razorpay = new Razorpay(razorpayConfig);
 
     const order = await razorpay.orders.create({
       amount,
@@ -61,7 +60,7 @@ export async function POST(req) {
           amount: order.amount,
           currency: order.currency,
         },
-        keyId: process.env.RAZORPAY_KEY_ID,
+        keyId: razorpayConfig.key_id,
       },
       { status: 201 }
     );

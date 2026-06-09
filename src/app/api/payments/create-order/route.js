@@ -1,5 +1,6 @@
 import Razorpay from 'razorpay';
 import { NextResponse } from 'next/server';
+import { getRazorpayConfig } from '@/lib/razorpayConfig';
 
 export async function POST(req) {
   try {
@@ -12,10 +13,16 @@ export async function POST(req) {
     if (Number(amount) <= 0) {
       return NextResponse.json({ error: 'Amount must be greater than zero' }, { status: 400 });
     }
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
+
+    const razorpayConfig = getRazorpayConfig();
+    if (!razorpayConfig) {
+      return NextResponse.json(
+        { error: 'Razorpay is not configured on this environment' },
+        { status: 500 }
+      );
+    }
+
+    const razorpay = new Razorpay(razorpayConfig);
 
     const options = {
       amount: Number(amount), // amount in paise
@@ -25,7 +32,10 @@ export async function POST(req) {
     };
 
     const order = await razorpay.orders.create(options);
-    return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency, keyId: process.env.RAZORPAY_KEY_ID }, { status: 200 });
+    return NextResponse.json(
+      { orderId: order.id, amount: order.amount, currency: order.currency, keyId: razorpayConfig.key_id },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Razorpay order creation error:', error);
     return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
